@@ -6,7 +6,10 @@ const asyncHandler = require("express-async-handler");
 
 let upload_path = path.join(__dirname, "../uploadFolder/");
 
+
 const uploadFile = asyncHandler(async (req, res, next) => {
+
+  // Copy from here to use formidable
   const form = formidable();
 
   form.parse(req, async (err, fields, files) => {
@@ -14,12 +17,16 @@ const uploadFile = asyncHandler(async (req, res, next) => {
       next(err);
       return;
     }
+
+    // All the other data like req.body stored in fields, so use fields for access req.body
     const { username } = fields;
 
     if (!username) {
       res.status(401);
       return next(new Error("Please provide username"));
     }
+
+    // Operation to perform if no any file uploaded
     if (!files.uploadFile) {
       try {
         const response = await FileSchema.create({
@@ -33,14 +40,21 @@ const uploadFile = asyncHandler(async (req, res, next) => {
       }
       return;
     }
+
+    // oldpath shows the original path of file
     var oldpath = files.uploadFile.filepath;
+    // newpath indicates new path, which is absolute path, not usefull as well
     var newpath =
       upload_path +
       new Date().getTime() +
-      path.extname(files.uploadFile.originalFilename);
+      path.extname
+        (files.uploadFile.originalFilename);
+
+    //newName indicates the new name which is stored in timestamp.extension format
     let newName =
       new Date().getTime() + path.extname(files.uploadFile.originalFilename);
 
+    // rename stores the file in newpath i.e. in uploadedFolder
     fs.rename(oldpath, newpath, function (err) {
       if (err) throw new Error(err);
     });
