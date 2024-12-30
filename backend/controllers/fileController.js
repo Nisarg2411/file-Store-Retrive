@@ -54,7 +54,7 @@ const uploadFile = asyncHandler(async (req, res, next) => {
     let newName =
       new Date().getTime() + path.extname(files.uploadFile.originalFilename);
 
-    // rename stores the file in newpath i.e. in uploadedFolder
+    // rename stores the file in newpath i.e. in  uploadedFolder
     fs.rename(oldpath, newpath, function (err) {
       if (err) throw new Error(err);
     });
